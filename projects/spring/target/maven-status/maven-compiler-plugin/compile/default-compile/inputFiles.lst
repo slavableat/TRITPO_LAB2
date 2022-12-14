@@ -1,0 +1,11 @@
+/home/slava/programming/IdeaProjects/SpringBoot-task5/src/main/java/com/example/springboothibernate/Controller/BookController.java
+/home/slava/programming/IdeaProjects/SpringBoot-task5/src/main/java/com/example/springboothibernate/SpringbootHibernateApplication.java
+/home/slava/programming/IdeaProjects/SpringBoot-task5/src/main/java/com/example/springboothibernate/Service/AuthorService.java
+/home/slava/programming/IdeaProjects/SpringBoot-task5/src/main/java/com/example/springboothibernate/Repository/BookRepository.java
+/home/slava/programming/IdeaProjects/SpringBoot-task5/src/main/java/com/example/springboothibernate/Repository/GenreRepository.java
+/home/slava/programming/IdeaProjects/SpringBoot-task5/src/main/java/com/example/springboothibernate/Model/Author.java
+/home/slava/programming/IdeaProjects/SpringBoot-task5/src/main/java/com/example/springboothibernate/Model/Book.java
+/home/slava/programming/IdeaProjects/SpringBoot-task5/src/main/java/com/example/springboothibernate/Service/BookService.java
+/home/slava/programming/IdeaProjects/SpringBoot-task5/src/main/java/com/example/springboothibernate/Repository/AuthorRepository.java
+/home/slava/programming/IdeaProjects/SpringBoot-task5/src/main/java/com/example/springboothibernate/Model/Genre.java
+/home/slava/programming/IdeaProjects/SpringBoot-task5/src/main/java/com/example/springboothibernate/Service/GenreService.java
