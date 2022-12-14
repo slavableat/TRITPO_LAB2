@@ -1,0 +1,17 @@
+<h1 class="text-center" style="margin:10px"> Жанры </h1>
+<div class="card my-5">
+  <div class="card-body">
+    <table class="table table-bordered table-striped">
+      <thead class="thead-dark">
+      <tr>
+        <th scope="col">Жанр</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let genre of genres">
+        <td>{{ genre.name }}</td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

@@ -1,0 +1,29 @@
+<h1 class="text-center" style="padding-top: 30px"> Библиотека </h1>
+<div class="card-body">
+  <table class="table table-bordered table-striped">
+    <thead class="thead-dark">
+    <tr>
+      <th scope="col">Имя книги</th>
+      <th scope="col">Жанр</th>
+      <th scope="col">Авторы</th>
+      <th scope="col">Действия</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let book of books">
+      <td>{{ book.name }}</td>
+      <td>{{book.genre.name}}</td>
+      <td><p *ngFor="let author of book.authors">{{author.name}}</p></td>
+      <td>
+
+        <button class="book-btn btn btn-danger" style="background: green; border-color: green"
+                (click)="editBook(book.id)"> Изменить
+        </button>
+        <br>
+        <button class="book-btn btn btn-danger" (click)="deleteBook(book.id)"> Удалить</button>
+      </td>
+    </tr>
+
+    </tbody>
+  </table>
+</div>
