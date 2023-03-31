@@ -1,6 +1,6 @@
 # Docs
 
-[Installation guide](https://github.com/Xotab413/SDTT/blob/main/install_guide.md)
+[Installation guide](https://github.com/slavableat/TRITPO_LAB2/blob/master/installition_guide.md)
 
 [Requirements](https://github.com/slavableat/TRITPO_LAB2/tree/master/requirements)
 
