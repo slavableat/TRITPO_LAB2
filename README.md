@@ -7,3 +7,5 @@
 [Testing](https://github.com/slavableat/TRITPO_LAB2/tree/master/testing)
 
 [Project source code](https://github.com/slavableat/TRITPO_LAB2/tree/master/projects)
+
+[Project API documentation](https://github.com/slavableat/TRITPO_LAB2/tree/master/projects/spring/src/main/resources/README.md)
