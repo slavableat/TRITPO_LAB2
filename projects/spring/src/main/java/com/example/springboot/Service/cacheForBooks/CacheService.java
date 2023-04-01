@@ -1,7 +1,6 @@
 package com.example.springboot.Service.cacheForBooks;
 
 import com.example.springboot.Model.Book;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -23,7 +22,7 @@ public class CacheService {
         this.books.clear();
     }
 
-    public Book getIfContainsElseGetNull(Long id){
+    public Book getOrNull(Long id){
         if(this.books.isEmpty()) return null;
         for (Book book: this.books) {
             if(book.getId().equals(id)) {

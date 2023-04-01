@@ -15,9 +15,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class BookServiceImpl implements BookService {
@@ -57,16 +57,15 @@ public class BookServiceImpl implements BookService {
         if (findGenre != null) {
             book.setGenre(findGenre);
         }
-        book.getGenre().getBooks().add(book);
-        genreRepository.save(book.getGenre());
-        bookRepository.save(book);
-        for (Author author : book.getAuthors()) {
-            if (authorRepository.findByName(author.getName()) != null) {
-                author = authorRepository.findByName(author.getName());
+        book.setAuthors(book.getAuthors().stream().map(author -> {
+            Author existstAuthor = authorRepository.findByName(author.getName());
+            if (existstAuthor != null) {
+                return existstAuthor;
+            } else {
+                return author;
             }
-            author.getBooks().add(book);
-            authorRepository.save(author);
-        }
+        }).collect(Collectors.toSet()));
+        bookRepository.save(book);
         cacheService.clearCache();
         return book;
     }
@@ -74,132 +73,66 @@ public class BookServiceImpl implements BookService {
     @Override
     public Book getBookById(Long id) throws CustomException {
         LOGGER.info("Service accessed " + accessCounterService.incrementAccessCounterAndGetResult() + " times");
-        Book book = cacheService.getIfContainsElseGetNull(id);
+        Book book = cacheService.getOrNull(id);
         if (book != null) {
             LOGGER.info("Gets from memory");
             return book;
         }
-        Optional<Book> bookByDatabase = bookRepository.findById(id);
-        if (bookByDatabase.isEmpty()) {
+        Optional<Book> bookFromDatabase = bookRepository.findById(id);
+        if (bookFromDatabase.isEmpty()) {
             throw new CustomException("Invalid book id: " + id);
         }
         LOGGER.info("Gets from database");
-        return bookByDatabase.get();
+        return bookFromDatabase.get();
     }
 
     @Override
-    public Book editBook(Book book) throws CustomException {
+    public Book editBook(Book newBook) throws CustomException {
         LOGGER.info("Service accessed " + accessCounterService.incrementAccessCounterAndGetResult() + " times");
-        validateBook(book);
-        if(book.getId() == null) throw new CustomException("Book doesnt have id");
-        Book oldBook = bookRepository.findById(book.getId()).orElse(null);
+        validateBook(newBook);
+        if (newBook.getId() == null) throw new CustomException("Book doesnt have id");
+        Book oldBook = bookRepository.findById(newBook.getId()).orElse(null);
         if (oldBook == null) {
             throw new CustomException("Database doesnt have this book");
         }
-        if (!book.getName().equals(oldBook.getName())) {
-            oldBook.setName(book.getName());
+        if (!newBook.getName().equals(oldBook.getName())) {
+            oldBook.setName(newBook.getName());
         }
-        List<Author> mustBEDeleted = new ArrayList<>();
-        oldBook.getAuthors().stream().forEach(author -> {
-            mustBEDeleted.add(author);
-            author.getBooks().remove(oldBook);
-        });
-//        for (Author author : oldBook.getAuthors()) {
-//            mustBEDeleted.add(author);
-//            author.getBooks().remove(oldBook);
-//        }
-        oldBook.getAuthors().clear();
-        mustBEDeleted.stream().forEach(author -> {
-            if(author.getBooks().isEmpty()){
-                authorRepository.deleteById(author.getId());
+
+        if (!newBook.getGenre().getName().equals(oldBook.getGenre().getName())) {
+            Genre genreFromDatabase = genreRepository.findByName(newBook.getGenre().getName());
+            if (genreFromDatabase != null) {
+                oldBook.setGenre(genreFromDatabase);
+            }else {
+                oldBook.setGenre(newBook.getGenre());
             }
-        });
-//        for (Author author : mustBEDeleted) {
-//            if (author.getBooks().isEmpty()) {
-//                authorRepository.deleteById(author.getId());
-//            }
-//        }
-        mustBEDeleted.clear();
-        book.getAuthors().stream().forEach(author -> {
-            Author oldAuthor = authorRepository.findByName(author.getName());
-            if (oldAuthor != null) {
-                author = oldAuthor;
-            }
-            author.getBooks().add(oldBook);
-            authorRepository.save(author);
-        });
-//        for (Author author : book.getAuthors()) {
-//            Author oldAuthor = authorRepository.findByName(author.getName());
-//            if (oldAuthor != null) {
-//                author = oldAuthor;
-//            }
-//            author.getBooks().add(oldBook);
-//            authorRepository.save(author);
-//        }
-        long mustBeDeletedGenreId = 0;
-        if (!book.getGenre().getName().equals(oldBook.getGenre().getName())) {
-            oldBook.getGenre().getBooks().remove(oldBook);
-            if (oldBook.getGenre().getBooks().isEmpty()) {
-                mustBeDeletedGenreId = oldBook.getGenre().getId();
-            }
-            Genre oldGenre = genreRepository.findByName(book.getGenre().getName());
-            if (oldGenre != null) {
-                oldBook.setGenre(oldGenre);
+        }
+
+
+        oldBook.setAuthors(newBook.getAuthors().stream().map(author -> {
+            Author existstAuthor = authorRepository.findByName(author.getName());
+            if (existstAuthor != null) {
+                return existstAuthor;
             } else {
-                oldBook.setGenre(book.getGenre());
+                return author;
             }
-            oldBook.getGenre().getBooks().add(oldBook);
-            genreRepository.save(oldBook.getGenre());
-        }
-        if (mustBeDeletedGenreId != 0) {
-            genreRepository.deleteById(mustBeDeletedGenreId);
-        }
+        }).collect(Collectors.toSet()));
+
+        bookRepository.save(oldBook);
+
         cacheService.clearCache();
-        return oldBook;
+        return null;
     }
 
     @Override
     public void deleteById(Long id) throws CustomException {
         LOGGER.info("Service accessed " + accessCounterService.incrementAccessCounterAndGetResult() + " times");
-        Book book = bookRepository.findById(id).orElse(null);
-        if (book == null) {
-            throw new CustomException("Invalid book id");
-        }
-        List<Author> mustBEDeleted = new ArrayList<>();
-        book.getAuthors().stream().forEach(author -> {
-            mustBEDeleted.add(author);
-            author.getBooks().remove(book);
-        });
-//        for (Author author : book.getAuthors()) {
-//            mustBEDeleted.add(author);
-//            author.getBooks().remove(book);
-//        }
-        book.getAuthors().clear();
-        bookRepository.save(book);
-        mustBEDeleted.stream().forEach(author -> {
-            if (author.getBooks().isEmpty()) {
-                authorRepository.deleteById(author.getId());
-            }
-        });
-//        for (Author author : mustBEDeleted) {
-//            if (author.getBooks().isEmpty()) {
-//                authorRepository.deleteById(author.getId());
-//            }
-//        }
-        mustBEDeleted.clear();
-        book.getGenre().getBooks().remove(book);
-        if (book.getGenre().getBooks().isEmpty()) {
-            genreRepository.deleteById(book.getGenre().getId());
-        } else {
-            genreRepository.save(book.getGenre());
-        }
-        book.setGenre(null);
-        bookRepository.delete(book);
+        bookRepository.deleteById(id);
         cacheService.clearCache();
     }
 
     @Override
-    public void deleteAllBooks() throws CustomException{
+    public void deleteAllBooks() throws CustomException {
         for (Book book :
                 this.findAllBooks()) {
             this.deleteById(book.getId());
@@ -207,7 +140,7 @@ public class BookServiceImpl implements BookService {
     }
 
     private void validateBook(Book book) throws CustomException {
-        if(book.getName() == null) throw new CustomException("Book doesnt have name");
+        if (book.getName() == null) throw new CustomException("Book doesnt have name");
         if (book.getGenre() == null) throw new CustomException("Book doesnt have genre");
         if (book.getAuthors() == null ||
                 book.getAuthors().isEmpty()) throw new CustomException("Book doesnt have authors");

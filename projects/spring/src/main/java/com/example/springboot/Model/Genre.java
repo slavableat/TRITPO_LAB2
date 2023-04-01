@@ -29,11 +29,4 @@ public class Genre {
     @Access(AccessType.PROPERTY)
     @NotBlank
     protected String name;
-
-    @JsonIgnoreProperties("genre")
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "genre", orphanRemoval = true)
-    @NotEmpty
-    @Valid
-    protected Set<Book> books = new HashSet<>();
-
 }

@@ -28,7 +28,7 @@ public class Book {
     protected String name;
 
     @JsonIgnoreProperties("books")
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
     @JoinColumn(name = "g_id")
     @Access(AccessType.PROPERTY)
     @NotNull
@@ -36,8 +36,12 @@ public class Book {
     protected Genre genre;
 
     @JsonIgnoreProperties("books")
-    @ManyToMany(mappedBy = "books", fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
     @Access(AccessType.PROPERTY)
+    @JoinTable(name = "books_authors",
+            joinColumns = @JoinColumn(name = "a_id"),
+            inverseJoinColumns = @JoinColumn(name = "b_id")
+    )
     @NotNull
     @Valid
     protected Set<Author> authors = new HashSet<>();

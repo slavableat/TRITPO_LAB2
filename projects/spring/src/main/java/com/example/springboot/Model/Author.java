@@ -27,15 +27,4 @@ public class Author {
     @Access(AccessType.PROPERTY)
     @NotBlank
     protected String name;
-
-
-    @JsonIgnoreProperties("authors")
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "books_authors",
-            joinColumns = @JoinColumn(name = "a_id"),
-            inverseJoinColumns = @JoinColumn(name = "b_id")
-    )
-    @Access(AccessType.PROPERTY)
-    @NotEmpty
-    protected Set<Book> books = new HashSet<>();
 }
