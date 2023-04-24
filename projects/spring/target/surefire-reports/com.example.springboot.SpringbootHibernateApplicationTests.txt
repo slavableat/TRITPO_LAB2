@@ -1,0 +1,44 @@
+-------------------------------------------------------------------------------
+Test set: com.example.springboot.SpringbootHibernateApplicationTests
+-------------------------------------------------------------------------------
+Tests run: 9, Failures: 0, Errors: 9, Skipped: 0, Time elapsed: 3.722 s <<< FAILURE! - in com.example.springboot.SpringbootHibernateApplicationTests
+com.example.springboot.SpringbootHibernateApplicationTests.addInvalidBookWithoutAuthorsTest  Time elapsed: 0.089 s  <<< ERROR!
+java.lang.NullPointerException: Cannot invoke "org.springframework.test.web.servlet.MockMvc.perform(org.springframework.test.web.servlet.RequestBuilder)" because "this.mockMvc" is null
+	at com.example.springboot.SpringbootHibernateApplicationTests.addInvalidBookWithoutAuthorsTest(SpringbootHibernateApplicationTests.java:156)
+
+com.example.springboot.SpringbootHibernateApplicationTests.addInvalidBookWithoutGenreTest  Time elapsed: 0.003 s  <<< ERROR!
+java.lang.NullPointerException: Cannot invoke "org.springframework.test.web.servlet.MockMvc.perform(org.springframework.test.web.servlet.RequestBuilder)" because "this.mockMvc" is null
+	at com.example.springboot.SpringbootHibernateApplicationTests.addInvalidBookWithoutGenreTest(SpringbootHibernateApplicationTests.java:144)
+
+com.example.springboot.SpringbootHibernateApplicationTests.addInvalidBookWithoutNameTest  Time elapsed: 0.003 s  <<< ERROR!
+java.lang.NullPointerException: Cannot invoke "org.springframework.test.web.servlet.MockMvc.perform(org.springframework.test.web.servlet.RequestBuilder)" because "this.mockMvc" is null
+	at com.example.springboot.SpringbootHibernateApplicationTests.addInvalidBookWithoutNameTest(SpringbootHibernateApplicationTests.java:125)
+
+com.example.springboot.SpringbootHibernateApplicationTests.getAllAuthorsTest  Time elapsed: 0.001 s  <<< ERROR!
+java.lang.NullPointerException: Cannot invoke "org.springframework.test.web.servlet.MockMvc.perform(org.springframework.test.web.servlet.RequestBuilder)" because "this.mockMvc" is null
+	at com.example.springboot.SpringbootHibernateApplicationTests.getAllAuthorsTest(SpringbootHibernateApplicationTests.java:78)
+
+com.example.springboot.SpringbootHibernateApplicationTests.getBook  Time elapsed: 0.132 s  <<< ERROR!
+org.springframework.dao.InvalidDataAccessApiUsageException: detached entity passed to persist: com.example.springboot.Model.Genre; nested exception is org.hibernate.PersistentObjectException: detached entity passed to persist: com.example.springboot.Model.Genre
+	at com.example.springboot.SpringbootHibernateApplicationTests.getBook(SpringbootHibernateApplicationTests.java:201)
+Caused by: org.hibernate.PersistentObjectException: detached entity passed to persist: com.example.springboot.Model.Genre
+	at com.example.springboot.SpringbootHibernateApplicationTests.getBook(SpringbootHibernateApplicationTests.java:201)
+
+com.example.springboot.SpringbootHibernateApplicationTests.deleteBookTest  Time elapsed: 0.009 s  <<< ERROR!
+org.springframework.dao.InvalidDataAccessApiUsageException: detached entity passed to persist: com.example.springboot.Model.Genre; nested exception is org.hibernate.PersistentObjectException: detached entity passed to persist: com.example.springboot.Model.Genre
+	at com.example.springboot.SpringbootHibernateApplicationTests.deleteBookTest(SpringbootHibernateApplicationTests.java:179)
+Caused by: org.hibernate.PersistentObjectException: detached entity passed to persist: com.example.springboot.Model.Genre
+	at com.example.springboot.SpringbootHibernateApplicationTests.deleteBookTest(SpringbootHibernateApplicationTests.java:179)
+
+com.example.springboot.SpringbootHibernateApplicationTests.getAllBooksTest  Time elapsed: 0.002 s  <<< ERROR!
+java.lang.NullPointerException: Cannot invoke "org.springframework.test.web.servlet.MockMvc.perform(org.springframework.test.web.servlet.RequestBuilder)" because "this.mockMvc" is null
+	at com.example.springboot.SpringbootHibernateApplicationTests.getAllBooksTest(SpringbootHibernateApplicationTests.java:63)
+
+com.example.springboot.SpringbootHibernateApplicationTests.addBookTest  Time elapsed: 0.004 s  <<< ERROR!
+java.lang.NullPointerException: Cannot invoke "org.springframework.test.web.servlet.MockMvc.perform(org.springframework.test.web.servlet.RequestBuilder)" because "this.mockMvc" is null
+	at com.example.springboot.SpringbootHibernateApplicationTests.addBookTest(SpringbootHibernateApplicationTests.java:106)
+
+com.example.springboot.SpringbootHibernateApplicationTests.getAllGenresTest  Time elapsed: 0.003 s  <<< ERROR!
+java.lang.NullPointerException: Cannot invoke "org.springframework.test.web.servlet.MockMvc.perform(org.springframework.test.web.servlet.RequestBuilder)" because "this.mockMvc" is null
+	at com.example.springboot.SpringbootHibernateApplicationTests.getAllGenresTest(SpringbootHibernateApplicationTests.java:85)
+

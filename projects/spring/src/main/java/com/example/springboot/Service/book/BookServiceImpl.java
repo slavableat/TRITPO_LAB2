@@ -10,30 +10,43 @@ import com.example.springboot.Repository.GenreRepository;
 import com.example.springboot.Service.accessCounter.AccessCounterService;
 import com.example.springboot.Service.cacheForBooks.CacheService;
 import com.example.springboot.exception.CustomException;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
 public class BookServiceImpl implements BookService {
 
-    @Autowired
-    private BookRepository bookRepository;
-    @Autowired
-    private GenreRepository genreRepository;
-    @Autowired
-    private AuthorRepository authorRepository;
-    @Autowired
-    private CacheService cacheService;
-    @Autowired
-    private AccessCounterService accessCounterService;
+
+    private final BookRepository bookRepository;
+
+    private final GenreRepository genreRepository;
+
+    private final AuthorRepository authorRepository;
+
+    private final CacheService cacheService;
+
+    private final AccessCounterService accessCounterService;
+    private final BooksReportService workBookService;
 
     private final Logger LOGGER = LoggerFactory.getLogger(BookController.class);
+
+    @Autowired
+    public BookServiceImpl(BookRepository bookRepository, GenreRepository genreRepository, AuthorRepository authorRepository, CacheService cacheService, AccessCounterService accessCounterService, BooksReportService workBookService) {
+        this.bookRepository = bookRepository;
+        this.genreRepository = genreRepository;
+        this.authorRepository = authorRepository;
+        this.cacheService = cacheService;
+        this.accessCounterService = accessCounterService;
+        this.workBookService = workBookService;
+    }
 
     @Override
     public List<Book> findAllBooks() {
@@ -59,11 +72,7 @@ public class BookServiceImpl implements BookService {
         }
         book.setAuthors(book.getAuthors().stream().map(author -> {
             Author existstAuthor = authorRepository.findByName(author.getName());
-            if (existstAuthor != null) {
-                return existstAuthor;
-            } else {
-                return author;
-            }
+            return Objects.requireNonNullElse(existstAuthor, author);
         }).collect(Collectors.toSet()));
         bookRepository.save(book);
         cacheService.clearCache();
@@ -111,11 +120,7 @@ public class BookServiceImpl implements BookService {
 
         oldBook.setAuthors(newBook.getAuthors().stream().map(author -> {
             Author existstAuthor = authorRepository.findByName(author.getName());
-            if (existstAuthor != null) {
-                return existstAuthor;
-            } else {
-                return author;
-            }
+            return Objects.requireNonNullElse(existstAuthor, author);
         }).collect(Collectors.toSet()));
 
         bookRepository.save(oldBook);
@@ -125,14 +130,19 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public void deleteById(Long id) throws CustomException {
+    public void deleteById(Long id) {
         LOGGER.info("Service accessed " + accessCounterService.incrementAccessCounterAndGetResult() + " times");
         bookRepository.deleteById(id);
         cacheService.clearCache();
     }
 
     @Override
-    public void deleteAllBooks() throws CustomException {
+    public Workbook createWorkbook() {
+        return workBookService.createWorkbook(findAllBooks());
+    }
+
+    @Override
+    public void deleteAllBooks() {
         for (Book book :
                 this.findAllBooks()) {
             this.deleteById(book.getId());

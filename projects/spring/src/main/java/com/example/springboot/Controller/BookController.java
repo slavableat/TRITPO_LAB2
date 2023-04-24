@@ -3,6 +3,7 @@ package com.example.springboot.Controller;
 import com.example.springboot.Model.Book;
 import com.example.springboot.Service.book.BookService;
 import com.example.springboot.exception.CustomException;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.hibernate.exception.ConstraintViolationException;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -13,7 +14,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.io.IOException;
 import java.util.*;
 
 @CrossOrigin(origins = {"http://localhost:3000", "http://localhost:4200"})
@@ -22,8 +25,12 @@ import java.util.*;
 @RequestMapping("/books")
 public class BookController {
     private final Logger LOGGER = LoggerFactory.getLogger(BookController.class);
+    private final BookService bookService;
+
     @Autowired
-    private BookService bookService;
+    public BookController(BookService bookService) {
+        this.bookService = bookService;
+    }
 
     @GetMapping("/all")
     public ResponseEntity findAllBooks() throws CustomException {
@@ -41,7 +48,7 @@ public class BookController {
             return new ResponseEntity(book, HttpStatus.CREATED);
         } catch (CustomException e) {
             LOGGER.info(e.getMessage());
-            return new ResponseEntity(e.getMessage(),HttpStatus.BAD_REQUEST);
+            return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
 
     }
@@ -67,7 +74,7 @@ public class BookController {
             return new ResponseEntity(updatedBook, HttpStatus.OK);
         } catch (CustomException e) {
             LOGGER.warn(e.getMessage());
-            return new ResponseEntity(e.getMessage(),HttpStatus.BAD_REQUEST);
+            return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -79,7 +86,7 @@ public class BookController {
             return new ResponseEntity(HttpStatus.OK);
         } catch (CustomException e) {
             LOGGER.warn(e.getMessage());
-            return new ResponseEntity(e.getMessage(),HttpStatus.BAD_REQUEST);
+            return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -88,5 +95,14 @@ public class BookController {
     ResponseEntity<String> handleConstraintViolationException(ConstraintViolationException e) {
         LOGGER.info("Get bad param");
         return new ResponseEntity<>("Invalid param, " + e.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    @GetMapping("/export")
+    public void exportBooks(HttpServletResponse response) throws IOException {
+        response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        response.setHeader("Content-Disposition", "attachment; filename=\"books.xlsx\"");
+        Workbook workbook = bookService.createWorkbook();
+        workbook.write(response.getOutputStream());
+        workbook.close();
     }
 }
