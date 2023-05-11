@@ -3,7 +3,6 @@ package com.example.springboot.Controller;
 import com.example.springboot.Model.Book;
 import com.example.springboot.Service.book.BookService;
 import com.example.springboot.exception.CustomException;
-import org.apache.poi.ss.usermodel.Workbook;
 import org.hibernate.exception.ConstraintViolationException;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -16,8 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
-import java.io.IOException;
-import java.util.*;
+import java.util.List;
 
 @CrossOrigin(origins = {"http://localhost:3000", "http://localhost:4200"})
 @RestController
@@ -98,11 +96,7 @@ public class BookController {
     }
 
     @GetMapping("/export")
-    public void exportBooks(HttpServletResponse response) throws IOException {
-        response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-        response.setHeader("Content-Disposition", "attachment; filename=\"books.xlsx\"");
-        Workbook workbook = bookService.createWorkbook();
-        workbook.write(response.getOutputStream());
-        workbook.close();
+    public void exportBooks(HttpServletResponse response) {
+        bookService.getWorkBook(response);
     }
 }

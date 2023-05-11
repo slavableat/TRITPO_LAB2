@@ -16,6 +16,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -25,6 +27,7 @@ import java.util.stream.Collectors;
 public class BookServiceImpl implements BookService {
 
 
+    public static final String WORK_BOOK_NAME = "Книги";
     private final BookRepository bookRepository;
 
     private final GenreRepository genreRepository;
@@ -112,7 +115,7 @@ public class BookServiceImpl implements BookService {
             Genre genreFromDatabase = genreRepository.findByName(newBook.getGenre().getName());
             if (genreFromDatabase != null) {
                 oldBook.setGenre(genreFromDatabase);
-            }else {
+            } else {
                 oldBook.setGenre(newBook.getGenre());
             }
         }
@@ -137,8 +140,14 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public Workbook createWorkbook() {
-        return workBookService.createWorkbook(findAllBooks());
+    public void getWorkBook(HttpServletResponse response) {
+        try {
+            Workbook workbook = workBookService.createWorkbook(findAllBooks());
+            workBookService.writeToServletResponse(response, workbook, WORK_BOOK_NAME);
+            workbook.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override

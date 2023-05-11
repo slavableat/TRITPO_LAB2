@@ -2,8 +2,8 @@ package com.example.springboot.Service.book;
 
 import com.example.springboot.Model.Book;
 import com.example.springboot.exception.CustomException;
-import org.apache.poi.ss.usermodel.Workbook;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 public interface BookService {
@@ -17,7 +17,7 @@ public interface BookService {
 
     void deleteById(Long id) throws CustomException;
 
-    Workbook createWorkbook();
+    void getWorkBook(HttpServletResponse response);
 
     //ToDo: FOR TESTS
     void deleteAllBooks() throws CustomException;
